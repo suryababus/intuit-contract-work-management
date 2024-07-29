@@ -1,0 +1,18 @@
+import Axios from "axios";
+
+export const ContractService = Axios.create({
+  baseURL: "http://localhost:8080",
+});
+
+//- or after instance has been created
+// ContractService.defaults.headers.common["Authorization"] = undefined;
+
+//- or before a request is made
+// using Interceptors
+ContractService.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers["Authorization"] = "Bearer " + localStorage.getItem("token");
+  }
+  return config;
+});
