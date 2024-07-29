@@ -1,6 +1,6 @@
-1. assign contract worker should be done only by the owner, Only if the contract is active, workers can be mapped to it
-2. Error handling
+#1. assign contract worker should be done only by the owner, Only if the contract is active, workers can be mapped to it
+#2. Error handling
 3. Unit test
-3. Update contract status
+#3. Update contract status
 4. Contract worker can only be 100% allocated
-5. Update Service Status
+#5. Update Service Status
