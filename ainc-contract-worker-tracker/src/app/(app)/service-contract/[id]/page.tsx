@@ -12,10 +12,14 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Plus } from "lucide-react";
 import { AssignNewContractWorkerForm } from "@/components/block/assign-new-contract-worker-form";
 import { useModal } from "@/components/ui/useModal";
+import { useAuth } from "@/state/auth";
+import { toast } from "sonner";
+import { EditServiceContractForm } from "@/components/block/edit-service-contract-form";
 
 export default function ServiceContract() {
   const { id } = useParams<{ id: string }>();
   const { data, error, isLoading } = useServiceContract(id);
+  const { showModal } = useModal();
 
   if (isLoading) {
     return <FullPageLoader />;
@@ -26,10 +30,26 @@ export default function ServiceContract() {
 
   const serviceContract = data?.data;
 
-  const percentageFilled =
+  let percentageFilled =
     ((serviceContract?.currentDeveloperCount ?? 0) /
       (serviceContract?.developerCountRequired ?? 0)) *
     100;
+
+  percentageFilled = percentageFilled > 100 ? 100 : percentageFilled;
+
+  const showEditModal = () => {
+    showModal({
+      content: (
+        <EditServiceContractForm
+          serviceContractId={id}
+          description={serviceContract?.description ?? ""}
+          title={serviceContract?.title ?? ""}
+          status={serviceContract?.status ?? ""}
+        />
+      ),
+    });
+  };
+
   return (
     <div className="w-full flex-1 max-w-5xl mx-auto p-4 md:p-6 lg:p-8">
       <header className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
@@ -40,12 +60,15 @@ export default function ServiceContract() {
           </p>
         </div>
         <div className="flex items-center gap-4 mt-4 md:mt-0">
-          <div className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium">
+          <div
+            className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium"
+            onClick={showEditModal}
+          >
             {serviceContract?.status}
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <UserIcon className="w-4 h-4" />
-            Owner: {serviceContract?.owner?.firstName}
+            Owner: {serviceContract?.owner?.email}
           </div>
         </div>
       </header>
@@ -119,6 +142,8 @@ export default function ServiceContract() {
       </div>
       <ProjectMembers
         employees={serviceContract?.employees ?? []}
+        serviceContractOwnerEmail={serviceContract?.owner.email ?? ""}
+        serviceContractStatus={serviceContract?.status ?? ""}
         serviceContractId={id}
       />
     </div>
@@ -148,12 +173,30 @@ function UserIcon(props: React.SVGProps<SVGSVGElement>) {
 type ProjectMembersProps = {
   employees: Employee[];
   serviceContractId: string;
+  serviceContractOwnerEmail: string;
+  serviceContractStatus: string;
 };
 
-function ProjectMembers({ employees, serviceContractId }: ProjectMembersProps) {
+function ProjectMembers({
+  employees,
+  serviceContractId,
+  serviceContractOwnerEmail,
+  serviceContractStatus,
+}: ProjectMembersProps) {
+  const { user } = useAuth();
   const { showModal } = useModal();
 
   const showAddNewContractWorkerForm = () => {
+    if (user?.email !== serviceContractOwnerEmail) {
+      toast.error("Only the owner can add new contract workers");
+      return;
+    }
+
+    if (serviceContractStatus !== "ACTIVE") {
+      toast.error("Contract must be active to add new contract workers");
+      return;
+    }
+
     showModal({
       content: (
         <AssignNewContractWorkerForm serviceContractId={serviceContractId} />

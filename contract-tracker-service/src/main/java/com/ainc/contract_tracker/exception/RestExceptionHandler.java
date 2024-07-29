@@ -1,16 +1,22 @@
 package com.ainc.contract_tracker.exception;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.ValidationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.webjars.NotFoundException;
 
 import java.nio.file.AccessDeniedException;
+import java.util.HashMap;
+import java.util.Map;
 
 @ResponseBody
 @ControllerAdvice
@@ -56,12 +62,34 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(buildError(HttpStatus.NOT_FOUND, ex.getMessage()), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Error> handleRequestValidationException(final MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        String jsonString;
+        try {
+            var objectMapper = new ObjectMapper();
+            jsonString = objectMapper.writeValueAsString(errors);
+        } catch (JsonProcessingException e) {
+            jsonString = "{\"error\": \"Error converting to JSON\"}";
+        }
+
+        return new ResponseEntity<>(buildError(HttpStatus.BAD_REQUEST, jsonString), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Error> handleGenericException(final Exception ex) {
         return new ResponseEntity<>(buildError(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private Error buildError(final HttpStatus status, final String message) {
-        return Error.builder().status(status.value()).message(message).build();
+        var error = new Error();
+        error.setStatus(status.value());
+        error.setMessage(message);
+        return error;
     }
 }

@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Path, useForm } from "react-hook-form";
+import { DefaultValues, Path, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Option, SearchSelect } from "./search-select";
@@ -30,6 +30,7 @@ type FormBuilderProps<T extends z.ZodObject<any, any>> = {
   title?: string;
   description?: string;
   loading?: boolean;
+  defaultValues?: DefaultValues<z.infer<T>>;
 };
 
 export function FormBuilder<T extends z.ZodObject<any, any>>({
@@ -39,12 +40,14 @@ export function FormBuilder<T extends z.ZodObject<any, any>>({
   description = "Please fill out the form",
   loading,
   options,
+  defaultValues,
 }: FormBuilderProps<T>) {
   type SchemaType = z.infer<T>;
 
   const form = useForm<SchemaType>({
     resolver: zodResolver(zodSchema),
     mode: "onChange",
+    defaultValues,
   });
 
   const handleSubmit = form.handleSubmit(onSubmit);

@@ -8,6 +8,7 @@ type UseAuth = {
   isAuthenticated: boolean;
   loading: boolean;
   init: (token?: string, user?: any) => Promise<void>;
+  logout: () => void;
 };
 
 export const useAuth = create<UseAuth>((set) => ({
@@ -49,5 +50,13 @@ export const useAuth = create<UseAuth>((set) => ({
         isAuthenticated: true,
       });
     }
+  },
+  logout: () => {
+    localStorage.removeItem("token");
+    set({
+      loading: false,
+      isAuthenticated: false,
+      user: null,
+    });
   },
 }));

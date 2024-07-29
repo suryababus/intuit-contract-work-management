@@ -17,7 +17,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/state/auth";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -29,6 +30,7 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
   });
+  const { replace } = useRouter();
   const { init } = useAuth();
 
   const onSubmit = form.handleSubmit(async (formData) => {
@@ -42,11 +44,11 @@ export function LoginForm() {
 
       await init(res.data.token, res.data.user);
       setLoading(false);
-      redirect("/dashboard");
+      replace("/dashboard");
     } catch (e) {
       setLoading(false);
 
-      console.log(e);
+      toast.error("Error logging in: " + e);
     }
   });
 
