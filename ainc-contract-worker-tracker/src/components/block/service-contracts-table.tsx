@@ -1,5 +1,4 @@
-import { useFilterContractWorkers } from "@/api/contract-worker/filter-contract-workers";
-import { FullPageLoader } from "../ui/full-page-loader";
+import { Loader } from "../ui/full-page-loader";
 import React from "react";
 import {
   Table,
@@ -25,41 +24,46 @@ export const ServiceContractTable = ({ searchKey }: Props) => {
   };
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-[100px]">Id</TableHead>
-          <TableHead>Title</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Owner Email</TableHead>
-          <TableHead>Developer Count</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {isLoading ? (
-          <FullPageLoader />
-        ) : (
-          data?.data &&
-          data?.data.map((serviceContract) => (
-            <TableRow
-              key={serviceContract.id}
-              onClick={() => onRowClick(serviceContract.id)}
-            >
-              <TableCell className="font-medium  text-ellipsis whitespace-nowrap">
-                {serviceContract.id}
-              </TableCell>
-              <TableCell className="font-medium">
-                {serviceContract.title}
-              </TableCell>
-              <TableCell>{serviceContract.status ?? "-"}</TableCell>
-              <TableCell>{serviceContract.owner?.email ?? "-"}</TableCell>
-              <TableCell>
-                {serviceContract.developerCountRequired ?? "-"}
-              </TableCell>
-            </TableRow>
-          ))
-        )}
-      </TableBody>
-    </Table>
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-[100px]">Id</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Owner Email</TableHead>
+            <TableHead>Developer Count</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {!isLoading
+            ? data?.data &&
+              data?.data.map((serviceContract) => (
+                <TableRow
+                  key={serviceContract.id}
+                  onClick={() => onRowClick(serviceContract.id)}
+                >
+                  <TableCell className="font-medium  text-ellipsis whitespace-nowrap">
+                    {serviceContract.id}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    {serviceContract.title}
+                  </TableCell>
+                  <TableCell>{serviceContract.status ?? "-"}</TableCell>
+                  <TableCell>{serviceContract.owner?.email ?? "-"}</TableCell>
+                  <TableCell>
+                    {serviceContract.developerCountRequired ?? "-"}
+                  </TableCell>
+                </TableRow>
+              ))
+            : null}
+        </TableBody>
+      </Table>
+      {isLoading ? (
+        <div className="flex justify-center my-2">
+          <Loader />
+        </div>
+      ) : null}
+    </>
   );
 };

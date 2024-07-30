@@ -111,7 +111,7 @@ export function FormBuilder<T extends z.ZodObject<any, any>>({
                       option.value.toLowerCase().includes(key.toLowerCase())
                     );
                   }}
-                  value={_field.value}
+                  value={_field.value ?? ""}
                 />
               </FormControl>
               <FormMessage />
@@ -133,7 +133,12 @@ export function FormBuilder<T extends z.ZodObject<any, any>>({
               {optional ? "" : "*"}
             </FormLabel>
             <FormControl>
-              <Input {..._field} disabled={loading} />
+              <Input
+                {..._field}
+                value={_field.value ?? ""}
+                onChange={_field.onChange}
+                disabled={loading}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -19,7 +19,7 @@ export const SearchInput = (props: Props) => {
     return () => {
       clearTimeout(timer);
     };
-  }, [key]);
+  }, [key, onKeyChange]);
 
   return (
     <div className=" max-w-96 w-[90%] flex flex-row items-center rounded-md border border-input bg-background">
