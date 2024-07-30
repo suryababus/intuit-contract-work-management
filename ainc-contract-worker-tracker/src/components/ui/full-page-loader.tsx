@@ -8,6 +8,9 @@ export const FullPageLoader = () => {
 
 export const Loader = () => {
   return (
-    <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-gray-900"></div>
+    <div
+      className="h-10 w-10 animate-spin rounded-full border-b-2 border-gray-900"
+      data-testid="loader"
+    ></div>
   );
 };
