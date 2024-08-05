@@ -31,9 +31,9 @@ export const UnassignedWorkForceWidget = () => {
     ) ?? [];
 
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader>
-        <CardTitle>Ainc Unassigned Work Force</CardTitle>
+        <CardTitle>Unassigned Work Force</CardTitle>
         <CardDescription>View of top unassigned employees</CardDescription>
       </CardHeader>
       <CardContent className="p-0">

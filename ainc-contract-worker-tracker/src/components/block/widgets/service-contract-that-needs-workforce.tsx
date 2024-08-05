@@ -29,9 +29,9 @@ export const ServiceContractThatNeedsWorkforce = () => {
     ) ?? [];
 
   return (
-    <Card>
+    <Card className="flex-1">
       <CardHeader>
-        <CardTitle>Ainc Service Contracts That Need Work Force</CardTitle>
+        <CardTitle>Service Contracts That Need Work Force</CardTitle>
         <CardDescription>
           View of top service contracts that need work force
         </CardDescription>

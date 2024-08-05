@@ -1,7 +1,7 @@
 import Axios from "axios";
 
 export const ContractService = Axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: process.env.NEXT_PUBLIC_BE_URL ?? "http://localhost:8080",
 });
 
 //- or after instance has been created
