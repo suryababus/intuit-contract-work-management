@@ -3,6 +3,8 @@ import { FormBuilder } from "../ui/form-builder";
 import { useAddNewContractWorker } from "@/api/contract-worker/add-new-contract-worker";
 import { toast } from "sonner";
 import { useModal } from "../ui/useModal";
+import { AxiosError } from "axios";
+import { handleAxiosErrorToString } from "@/lib/axios-error-handler";
 
 const addNewContractWorkerFormSchema = z.object({
   firstName: z.string().min(2).max(50).describe("First Name"),
@@ -30,8 +32,11 @@ export const AddNewContractWorkerForm = () => {
       await mutateAsync(data);
       closeModal();
       toast.success("Contract worker added successfully");
-    } catch (error) {
-      toast.error("Error adding contract worker: " + error);
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        let errorMessage = handleAxiosErrorToString(e);
+        toast.error(errorMessage);
+      }
     }
   };
 

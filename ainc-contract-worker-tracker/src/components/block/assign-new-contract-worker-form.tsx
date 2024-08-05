@@ -12,6 +12,7 @@ import { useAssignEmployeeServiceContract } from "@/api/service-contract/assign-
 import { useModal } from "../ui/useModal";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
+import { handleAxiosErrorToString } from "@/lib/axios-error-handler";
 
 const assignNewContractWorkerFormSchema = z.object({
   contractWorker: z
@@ -49,11 +50,10 @@ export const AssignNewContractWorkerForm = ({
       });
       closeModal();
       toast.success("Contract worker assigned successfully");
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          "Error assigning contract worker: " + error.response?.data.message
-        );
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        let errorMessage = handleAxiosErrorToString(e);
+        toast.error(errorMessage);
       }
     }
   };

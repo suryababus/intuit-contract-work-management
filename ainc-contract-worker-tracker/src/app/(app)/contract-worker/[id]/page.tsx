@@ -17,6 +17,9 @@ import { useContractWorker } from "@/api/contract-worker/get-contract-worker";
 import { Button } from "@/components/ui/button";
 import { useDeleteContractWorker } from "@/api/contract-worker/delete-contract-worker";
 import { useModal } from "@/components/ui/useModal";
+import { handleAxiosErrorToString } from "@/lib/axios-error-handler";
+import { AxiosError } from "axios";
+import { toast } from "sonner";
 
 function ServiceContractTable() {
   const { id } = useParams<{ id: string }>();
@@ -101,7 +104,14 @@ function ContractWorkerCard() {
       title: "Delete Contract Worker",
       content: "Are you sure you want to delete this contract worker?",
       onConfirm: async () => {
-        await mutateAsync(id);
+        try {
+          await mutateAsync(id);
+        } catch (e) {
+          if (e instanceof AxiosError) {
+            let errorMessage = handleAxiosErrorToString(e);
+            toast.error(errorMessage);
+          }
+        }
         closeModal();
       },
       onCancel: closeModal,

@@ -5,6 +5,8 @@ import { FormBuilder } from "../ui/form-builder";
 import { toast } from "sonner";
 import { useModal } from "../ui/useModal";
 import { filterContractWorkers } from "@/api/contract-worker/filter-contract-workers";
+import { handleAxiosErrorToString } from "@/lib/axios-error-handler";
+import { AxiosError } from "axios";
 
 const statusOptions = [
   {
@@ -62,8 +64,11 @@ export const AddNewServiceContractForm = () => {
       });
       closeModal();
       toast.success("Service Contract created successfully");
-    } catch (error) {
-      toast.error("Error created service contract: " + error);
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        let errorMessage = handleAxiosErrorToString(e);
+        toast.error(errorMessage);
+      }
     }
   };
 

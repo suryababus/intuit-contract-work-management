@@ -4,6 +4,11 @@ import { toast } from "sonner";
 import { useModal } from "../ui/useModal";
 import { filterContractWorkers } from "@/api/contract-worker/filter-contract-workers";
 import { useEditServiceContract } from "@/api/service-contract/update-service-contract";
+import {
+  handleAxiosError,
+  handleAxiosErrorToString,
+} from "@/lib/axios-error-handler";
+import { AxiosError } from "axios";
 
 const editServiceContractRequestSchema = z.object({
   title: z.string().min(10).max(50).describe("Title"),
@@ -39,8 +44,11 @@ export const EditServiceContractForm = ({
       });
       closeModal();
       toast.success("Service contract updated successfully");
-    } catch (error) {
-      toast.error("Error updated service contract: " + error);
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        let errorMessage = handleAxiosErrorToString(e);
+        toast.error(errorMessage);
+      }
     }
   };
 
@@ -58,7 +66,6 @@ export const EditServiceContractForm = ({
           title,
         }}
       />
-      {error && <p className="text-red-500">{error.message}</p>}
     </div>
   );
 };
