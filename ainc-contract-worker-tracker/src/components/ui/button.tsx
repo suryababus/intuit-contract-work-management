@@ -6,7 +6,7 @@ import { LoaderCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ",
+  "relative inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ",
   {
     variants: {
       variant: {
@@ -53,11 +53,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
       >
-        {loading ? (
-          <LoaderCircle className=" animate-spin h-5 w-5 " />
-        ) : (
-          children
+        {loading && (
+          <LoaderCircle className="absolute inset-0 animate-spin h-5 w-5 m-auto" />
         )}
+        <span
+          className={cn(
+            " inline-flex items-center justify-center",
+            loading ? "opacity-0" : ""
+          )}
+        >
+          {children}
+        </span>
       </Comp>
     );
   }

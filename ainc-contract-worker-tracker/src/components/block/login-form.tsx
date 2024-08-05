@@ -121,7 +121,7 @@ export function LoginForm() {
             />
           </CardContent>
           <CardFooter className="flex justify-between">
-            <Button loading={loading}>Signin</Button>
+            <Button loading={loading}>Sign in</Button>
           </CardFooter>
         </form>
       </Form>
