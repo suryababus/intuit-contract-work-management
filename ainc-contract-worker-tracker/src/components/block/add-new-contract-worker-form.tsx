@@ -11,8 +11,8 @@ const addNewContractWorkerFormSchema = z.object({
   lastName: z.string().min(2).max(50).describe("Last Name"),
   type: z.enum(["CONTRACT_WORKER", "FULL_TIME"]).describe("Type"),
   role: z.enum(["PM", "DEVELOPER", "ADMIN"]).describe("Role"),
-  startDate: z.string().date().describe("Start Date"),
-  endDate: z.string().date().describe("End Date"),
+  startDate: z.string().date().describe("Start Date (YYYY-MM-DD)"),
+  endDate: z.string().date().describe("End Date (YYYY-MM-DD)"),
   status: z.enum(["ACTIVE", "INACTIVE", "TERMINATED"]).describe("Status"),
   email: z.string().email().describe("Email"),
   phone: z
