@@ -83,7 +83,7 @@ export const ModalProvider = () => {
             className="sticky right-0 top-0 self-end h-0 overflow-visible"
             onClick={closeModal}
           >
-            <div className="bg-slate-100 hover:bg-slate-200 p-2 rounded-full">
+            <div className="bg-primary text-primary-foreground hover:bg-primary/90 p-2 rounded-full">
               <X className="h-6 w-6 " />
             </div>
           </div>

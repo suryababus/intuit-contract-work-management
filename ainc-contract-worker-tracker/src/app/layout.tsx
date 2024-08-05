@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
 import { AppQueryClientProvider } from "@/components/provider/app-query-client-provider";
 import { ModalProvider } from "@/components/ui/useModal";
 import { Toaster } from "@/components/ui/sonner";
-
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+import { ThemeProvider } from "@/components/block/theme-provider";
+import { cookies } from "next/headers";
+import { Theme } from "@/state/theme";
 
 export const metadata: Metadata = {
   title: "Ainc Management",
@@ -21,20 +17,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let defaultTheme = (cookies().get("theme")?.value as Theme) ?? "light";
+
   return (
     <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased flex flex-row light",
-          fontSans.variable
-        )}
-      >
+      <ThemeProvider defaultTheme={defaultTheme}>
         <AppQueryClientProvider>
           <Toaster position="top-right" />
           <ModalProvider />
           {children}
         </AppQueryClientProvider>
-      </body>
+      </ThemeProvider>
     </html>
   );
 }
