@@ -45,6 +45,7 @@ export const useModal = create<State>((set) => {
         onConfirm: undefined,
         onCancel: undefined,
         cancelTitle: undefined,
+        title: undefined,
         open: true,
         ...props,
       }),
