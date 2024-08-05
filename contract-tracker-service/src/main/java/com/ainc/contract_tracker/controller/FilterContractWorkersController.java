@@ -24,9 +24,12 @@ public class FilterContractWorkersController {
     private final ModelMapper modelMapper;
 
     @GetMapping
-    public List<ContractWorkerResponseDTO> getFilteredContractWorkers(@PathParam("") String key) {
-        System.out.println("key:" + key);
-        var employeeResult = contractWorkerService.filterEmployee(key);
+    public List<ContractWorkerResponseDTO> getFilteredContractWorkers(@PathParam("") String key, @PathParam("0") Integer page, @PathParam("10") Integer perPage) {
+        
+        page = page == null ? 0 : page;
+        perPage = perPage == null ? 10 : perPage;
+
+        var employeeResult = contractWorkerService.filterEmployee(key, page, perPage);
 
         return employeeResult.stream()
                 .map(user -> modelMapper.map(user, ContractWorkerResponseDTO.class))

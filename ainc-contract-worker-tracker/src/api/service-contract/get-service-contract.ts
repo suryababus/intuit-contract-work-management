@@ -24,6 +24,7 @@ export interface Employee {
   email: string;
   phone: string;
   deleted: boolean;
+  availableBandwidth: number;
 }
 
 export const getServiceContract = (id: string) => {

@@ -76,6 +76,7 @@ export function FormBuilder<T extends z.ZodObject<any, any>>({
                   onChange={(value) => _field.onChange(value)}
                   searchForKey={dropDownOptionsFetch}
                   value={_field.value?.label ?? ""}
+                  name={_field.name}
                 />
               </FormControl>
               <FormMessage />
@@ -112,6 +113,7 @@ export function FormBuilder<T extends z.ZodObject<any, any>>({
                     );
                   }}
                   value={_field.value ?? ""}
+                  name={_field.name}
                 />
               </FormControl>
               <FormMessage />

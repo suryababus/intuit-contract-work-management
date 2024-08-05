@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { ContractService } from "..";
+import { queryClient } from "@/components/provider/app-query-client-provider";
 
 interface CreateNewServiceContractRequest {
   title: string;
@@ -45,5 +46,10 @@ export const addNewServiceContract = (
 export const useAddNewServiceContract = () => {
   return useMutation({
     mutationFn: addNewServiceContract,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["filterServiceContracts"],
+      });
+    },
   });
 };

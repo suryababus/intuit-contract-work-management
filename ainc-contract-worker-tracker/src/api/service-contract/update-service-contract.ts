@@ -45,8 +45,8 @@ export const editServiceContract = (
 export const useEditServiceContract = () => {
   return useMutation({
     mutationFn: editServiceContract,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["serviceContract"] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["serviceContract"] });
     },
   });
 };

@@ -20,6 +20,12 @@ const assignNewContractWorkerFormSchema = z.object({
       value: z.string(),
     })
     .describe("Contract Worker"),
+  bandWidthPercentage: z
+    .preprocess(
+      (a) => parseInt(a as string, 10),
+      z.number().positive().max(100)
+    )
+    .describe("Bandwidth Percentage"),
 });
 
 type AssignNewContractWorkerFormProps = {
@@ -38,6 +44,7 @@ export const AssignNewContractWorkerForm = ({
     try {
       await mutateAsync({
         employeeId: data.contractWorker.value,
+        bandWidthPercentage: data.bandWidthPercentage,
         serviceContractId,
       });
       closeModal();
@@ -64,7 +71,7 @@ export const AssignNewContractWorkerForm = ({
             const data = await filterContractWorkers(key);
 
             return data.data.map((sc) => ({
-              label: sc.email,
+              label: sc.email + ` (${sc.availableBandwidth}%)`,
               value: sc.employeeNumber,
             }));
           },

@@ -1,16 +1,11 @@
-package com.ainc.contract_tracker.repository;
+package com.ainc.contract_tracker.dto;
 
-import com.ainc.contract_tracker.dto.ContractWorkerResponseDTO;
 import com.ainc.contract_tracker.model.ServiceContractStatusEnum;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ServiceContractSearch {
-
+public class ContractWorkerServiceContractResponseDTO {
     private String id;
 
     private String title;
@@ -24,5 +19,7 @@ public class ServiceContractSearch {
     private Integer developerCountRequired;
 
     private Integer currentDeveloperCount;
+
+    private Integer allocatedBandwidth;
 
 }

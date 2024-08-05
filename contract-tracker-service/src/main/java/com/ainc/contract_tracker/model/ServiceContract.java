@@ -2,6 +2,7 @@ package com.ainc.contract_tracker.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.util.Set;
@@ -27,6 +28,9 @@ public class ServiceContract {
 
     @Column(name = "current_developer_count")
     private Integer currentDeveloperCount;
+
+    @Formula("developer_count_required - current_developer_count")
+    private Integer developerCountInNeed;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")

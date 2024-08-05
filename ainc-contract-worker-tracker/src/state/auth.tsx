@@ -1,4 +1,5 @@
 import { meAPI, MeResponse } from "@/api/me";
+import { queryClient } from "@/components/provider/app-query-client-provider";
 import { init } from "next/dist/compiled/webpack/webpack";
 import { create } from "zustand";
 
@@ -28,14 +29,22 @@ export const useAuth = create<UseAuth>((set) => ({
       } else {
         // if token is there in the localstorage then the user might be authenticated, we have to ask the server for the user
 
-        const meRespone = await meAPI();
-        if (meRespone.status === 200) {
-          set({
-            loading: false,
-            isAuthenticated: true,
-            user: meRespone.data,
-          });
-        } else {
+        try {
+          const meRespone = await meAPI();
+          if (meRespone.status === 200) {
+            set({
+              loading: false,
+              isAuthenticated: true,
+              user: meRespone.data,
+            });
+          } else {
+            set({
+              loading: false,
+              isAuthenticated: false,
+            });
+          }
+        } catch (e) {
+          console.log(e);
           set({
             loading: false,
             isAuthenticated: false,
@@ -53,6 +62,7 @@ export const useAuth = create<UseAuth>((set) => ({
   },
   logout: () => {
     localStorage.removeItem("token");
+    queryClient.clear();
     set({
       loading: false,
       isAuthenticated: false,

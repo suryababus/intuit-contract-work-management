@@ -37,4 +37,6 @@ public class ContractWorkerResponseDTO {
     private String phone;
 
     private boolean deleted;
+    
+    private Integer availableBandwidth;
 }

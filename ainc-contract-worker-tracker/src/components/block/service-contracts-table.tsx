@@ -33,6 +33,7 @@ export const ServiceContractTable = ({ searchKey }: Props) => {
             <TableHead>Status</TableHead>
             <TableHead>Owner Email</TableHead>
             <TableHead>Developer Count</TableHead>
+            <TableHead>Assigned Developer Count</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -53,6 +54,9 @@ export const ServiceContractTable = ({ searchKey }: Props) => {
                   <TableCell>{serviceContract.owner?.email ?? "-"}</TableCell>
                   <TableCell>
                     {serviceContract.developerCountRequired ?? "-"}
+                  </TableCell>
+                  <TableCell>
+                    {serviceContract.currentDeveloperCount ?? "-"}
                   </TableCell>
                 </TableRow>
               ))

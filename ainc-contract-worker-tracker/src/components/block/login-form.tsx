@@ -12,21 +12,35 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { loginAPI } from "@/api/login";
-import { FormControl, FormField, FormItem, FormLabel, Form } from "../ui/form";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  Form,
+  FormMessage,
+} from "../ui/form";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/state/auth";
 import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Axios, AxiosError } from "axios";
+import { ErrorResposne } from "@/api";
+import { password } from "bun";
 
 const loginFormSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(2).max(50),
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .max(50, "Password is too long"),
 });
 
 export function LoginForm() {
   const [loading, setLoading] = React.useState(false);
+  const [errorMsg, setErrorMsg] = React.useState<Record<string, string>>({});
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
   });
@@ -47,8 +61,24 @@ export function LoginForm() {
       replace("/dashboard");
     } catch (e) {
       setLoading(false);
-
-      toast.error("Error logging in: " + e);
+      if (e instanceof AxiosError) {
+        const { response } = e as AxiosError<ErrorResposne>;
+        if (response?.data.message) {
+          if (typeof response?.data.message === "string") {
+            toast.error(response?.data.message);
+            setErrorMsg({
+              password: response?.data.message,
+            });
+          } else {
+            setErrorMsg(response?.data.message);
+            toast.error(
+              response?.data.message[Object.keys(response?.data.message)[0]]
+            );
+          }
+        } else {
+          toast.error("Something went wrong");
+        }
+      }
     }
   });
 
@@ -72,6 +102,7 @@ export function LoginForm() {
                   <FormControl>
                     <Input placeholder="Email" {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -84,6 +115,7 @@ export function LoginForm() {
                   <FormControl>
                     <Input placeholder="Password" {...field} type="password" />
                   </FormControl>
+                  <FormMessage>{errorMsg?.password ?? ""}</FormMessage>
                 </FormItem>
               )}
             />

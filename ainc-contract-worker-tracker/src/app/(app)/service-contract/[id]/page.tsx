@@ -4,12 +4,12 @@ import {
   useServiceContract,
 } from "@/api/service-contract/get-service-contract";
 import { FullPageLoader } from "@/components/ui/full-page-loader";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Plus } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { AssignNewContractWorkerForm } from "@/components/block/assign-new-contract-worker-form";
 import { useModal } from "@/components/ui/useModal";
 import { useAuth } from "@/state/auth";
@@ -61,10 +61,11 @@ export default function ServiceContract() {
         </div>
         <div className="flex items-center gap-4 mt-4 md:mt-0">
           <div
-            className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium"
+            className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm font-medium flex justify-center items-center gap-1"
             onClick={showEditModal}
           >
-            {serviceContract?.status}
+            <Pencil className="size-3" />
+            Edit
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <UserIcon className="w-4 h-4" />
@@ -186,6 +187,8 @@ function ProjectMembers({
   const { user } = useAuth();
   const { showModal } = useModal();
 
+  const { push } = useRouter();
+
   const showAddNewContractWorkerForm = () => {
     if (user?.email !== serviceContractOwnerEmail) {
       toast.error("Only the owner can add new contract workers");
@@ -204,15 +207,21 @@ function ProjectMembers({
     });
   };
 
+  const onEmployeeCardClick = (id: string) => {
+    push("/contract-worker/" + id);
+  };
+
   return (
     <section className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Project Team</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {employees.map((employee) => (
           <Card key={employee.employeeNumber}>
-            <CardContent className="flex flex-col items-center gap-2">
+            <CardContent
+              className="flex flex-col items-center gap-2"
+              onClick={() => onEmployeeCardClick(employee.employeeNumber)}
+            >
               <Avatar className="w-16 h-16 border">
-                <AvatarImage src="/placeholder-user.jpg" />
                 <AvatarFallback>
                   {employee.firstName[0].toUpperCase() +
                     (employee.lastName?.[0]?.toUpperCase() ?? "")}
@@ -234,7 +243,6 @@ function ProjectMembers({
         >
           <CardContent className="flex flex-col items-center gap-2 ">
             <Avatar className="w-16 h-16 border">
-              <AvatarImage src="/placeholder-user.jpg" />
               <AvatarFallback>
                 <Plus className="size-4" />
               </AvatarFallback>

@@ -59,7 +59,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<Error> handleIllegalStateException(final IllegalStateException ex) {
-        return new ResponseEntity<>(buildError(HttpStatus.NOT_FOUND, ex.getMessage()), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(buildError(HttpStatus.BAD_REQUEST, ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

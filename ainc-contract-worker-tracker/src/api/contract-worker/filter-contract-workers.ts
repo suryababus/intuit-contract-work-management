@@ -13,6 +13,7 @@ interface FilterContractWorkersResponse {
   email: string;
   phone: string;
   deleted: boolean;
+  availableBandwidth: number;
 }
 
 export const filterContractWorkers = (filter: string) => {
@@ -21,6 +22,8 @@ export const filterContractWorkers = (filter: string) => {
     {
       params: {
         key: filter,
+        page: 0,
+        perPage: 10,
       },
     }
   );

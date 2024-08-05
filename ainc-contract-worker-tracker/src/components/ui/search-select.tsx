@@ -9,6 +9,7 @@ type SearchSelectProps = {
   onChange: (option: Option) => void;
   value: string;
   searchForKey: (key: string) => Promise<Option[]>;
+  name?: string;
 };
 
 export type Option = {
@@ -20,6 +21,7 @@ export const SearchSelect = ({
   onChange,
   value,
   searchForKey,
+  name,
 }: SearchSelectProps) => {
   const [options, setOptions] = React.useState<Option[]>([]);
   const [open, setOpen] = React.useState(false);
@@ -35,10 +37,19 @@ export const SearchSelect = ({
     setOptions(data);
   };
 
+  useEffect(() => {
+    searchChange(value);
+  }, []);
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger className="w-full">
-        <Input placeholder="Search..." value={value} />
+        <Input
+          placeholder="Search..."
+          value={value}
+          name={name}
+          data-testid={`search-select-${name}`}
+        />
       </PopoverTrigger>
       <PopoverContent className="">
         <div className="flex flex-col gap-4 bg-background mt-1 ml-2 rounded-md">
@@ -49,6 +60,7 @@ export const SearchSelect = ({
                 <Label
                   className="text-sm p-2 hover:bg-muted w-full"
                   key={option.value}
+                  data-testid={`option-${option.value}`}
                   onClick={() => onValueSelect(option)}
                 >
                   {option.label}

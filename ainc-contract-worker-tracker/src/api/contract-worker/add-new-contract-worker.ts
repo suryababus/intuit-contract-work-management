@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { ContractService } from "..";
+import { queryClient } from "@/components/provider/app-query-client-provider";
 
 interface AddNewContractWorkerRequest {
   firstName: string;
@@ -25,5 +26,10 @@ export const addNewContractWorker = (
 export const useAddNewContractWorker = () => {
   return useMutation({
     mutationFn: addNewContractWorker,
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["filterContractWorkers"],
+      });
+    },
   });
 };

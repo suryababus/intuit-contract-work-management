@@ -8,4 +8,7 @@ import lombok.Data;
 public class AssignEmployeeToServiceContractRequestDTO {
     @NotNull
     Long employeeId;
+
+    @NotNull
+    Integer bandWidthPercentage;
 }

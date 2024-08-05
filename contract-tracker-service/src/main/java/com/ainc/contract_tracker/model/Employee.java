@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +42,7 @@ public class Employee implements UserDetails {
     private LocalDate endDate;
 
     @Column(name = "employee_number", unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long employeeNumber;
 
@@ -59,6 +60,9 @@ public class Employee implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private Integer availableBandwidth;
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")

@@ -3,13 +3,15 @@ package com.ainc.contract_tracker.service;
 
 import com.ainc.contract_tracker.dto.CreateServiceContractDTO;
 import com.ainc.contract_tracker.dto.UpdateServiceContractDTO;
-import com.ainc.contract_tracker.model.Employee;
-import com.ainc.contract_tracker.model.EmployeeStatusEnum;
-import com.ainc.contract_tracker.model.ServiceContract;
-import com.ainc.contract_tracker.model.ServiceContractStatusEnum;
+import com.ainc.contract_tracker.model.*;
+import com.ainc.contract_tracker.repository.EmployeeRepository;
 import com.ainc.contract_tracker.repository.ServiceContractRepository;
+import com.ainc.contract_tracker.repository.ServiceContractToEmployeesRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -25,6 +27,8 @@ public class ServiceContractService {
     private final ContractWorkerService contractWorkerService;
     private final ModelMapper modelMapper;
     private final AuthenticationService authenticationService;
+    private final ServiceContractToEmployeesRepository serviceContractToEmployeesRepository;
+    private final EmployeeRepository employeeRepository;
 
     public Optional<ServiceContract> getServiceContract(String id) {
         return this.serviceContractRepository.findById(id);
@@ -47,13 +51,18 @@ public class ServiceContractService {
     }
 
     public List<ServiceContract> searchContract(String key) {
-        var serviceContractSearchProjections = this.serviceContractRepository.search(key);
+        var pageRequest = PageRequest.of(0,
+                10,
+                Sort.by("developerCountInNeed").descending());
+
+        var serviceContractSearchProjections = this.serviceContractRepository.findAllByTitleContainsIgnoreCase(key, pageRequest);
         return serviceContractSearchProjections.stream()
                 .map(sCP -> this.modelMapper.map(sCP, ServiceContract.class))
                 .toList();
     }
 
-    public boolean assignEmployeeToContract(Long employeeId, String serviceContractId) throws AccessDeniedException {
+    @Transactional
+    public boolean assignEmployeeToContract(Long employeeId, String serviceContractId, Integer bandWidth) throws AccessDeniedException {
 
         var currentEmployee = this.authenticationService.getCurrentUser();
 
@@ -88,9 +97,21 @@ public class ServiceContractService {
             throw new IllegalStateException("Only active Contract worker can be assigned to service contracts.");
         }
 
+        if (employee.getAvailableBandwidth() < bandWidth) {
+            throw new IllegalStateException("Not enough bandwidth for " + employee.getFirstName());
+        }
+
 
         // Add the employee to the set
-        serviceContract.getEmployees().add(employee);
+        var newServiceContractToEmployee = new ServiceContractsToEmployees();
+        newServiceContractToEmployee.setEmployee(employee);
+        newServiceContractToEmployee.setService(serviceContract);
+        newServiceContractToEmployee.setBandWidth(bandWidth);
+        serviceContractToEmployeesRepository.save(newServiceContractToEmployee);
+
+        employee.setAvailableBandwidth(employee.getAvailableBandwidth() - bandWidth);
+        this.employeeRepository.save(employee);
+
 
         var currentDeveloperCount = serviceContract.getCurrentDeveloperCount();
         if (currentDeveloperCount == null) {
@@ -105,7 +126,7 @@ public class ServiceContractService {
     }
 
 
-    public Object updateServiceContract(String serviceContractId, UpdateServiceContractDTO updateServiceContractDTO) throws AccessDeniedException {
+    public ServiceContract updateServiceContract(String serviceContractId, UpdateServiceContractDTO updateServiceContractDTO) throws AccessDeniedException {
         var currentEmployee = this.authenticationService.getCurrentUser();
 
 
@@ -124,8 +145,7 @@ public class ServiceContractService {
 
 
         // Save the updated ServiceContract
-
         return this.serviceContractRepository.save(serviceContract);
-        
+
     }
 }

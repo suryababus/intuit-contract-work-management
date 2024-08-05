@@ -16,3 +16,8 @@ ContractService.interceptors.request.use((config) => {
   }
   return config;
 });
+
+export type ErrorResposne = {
+  status: number;
+  message: string | Record<string, string>;
+};

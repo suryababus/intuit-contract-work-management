@@ -36,7 +36,7 @@ public class ServiceContractController {
     }
 
     @PostMapping("/service-contract")
-    public ResponseEntity<ServiceContractResponseDTO> createServiceContract(@RequestBody CreateServiceContractDTO createServiceContractDTO) {
+    public ResponseEntity<ServiceContractResponseDTO> createServiceContract(@RequestBody @Valid CreateServiceContractDTO createServiceContractDTO) {
 
 
         var createdContract = serviceContractService.createServiceContract(createServiceContractDTO);
@@ -44,15 +44,16 @@ public class ServiceContractController {
     }
 
     @PostMapping("/service-contract/{serviceContractId}/assign")
-    public ResponseEntity<Boolean> assignEmployeeToServiceContract(@PathVariable String serviceContractId, @RequestBody AssignEmployeeToServiceContractRequestDTO assignEmployeeToServiceContractRequestDTO) throws AccessDeniedException {
+    public ResponseEntity<Boolean> assignEmployeeToServiceContract(@PathVariable String serviceContractId, @RequestBody @Valid AssignEmployeeToServiceContractRequestDTO assignEmployeeToServiceContractRequestDTO) throws AccessDeniedException {
 
-        return ResponseEntity.ok(this.serviceContractService.assignEmployeeToContract(assignEmployeeToServiceContractRequestDTO.getEmployeeId(), serviceContractId));
+        return ResponseEntity.ok(this.serviceContractService.assignEmployeeToContract(
+                assignEmployeeToServiceContractRequestDTO.getEmployeeId(),
+                serviceContractId,
+                assignEmployeeToServiceContractRequestDTO.getBandWidthPercentage()));
     }
 
     @PatchMapping("/service-contract/{id}")
     public ResponseEntity<ServiceContractResponseDTO> updateServiceContract(@PathVariable String id, @Valid @RequestBody UpdateServiceContractDTO updateServiceContractDTO) throws AccessDeniedException {
-
-
         var createdContract = serviceContractService.updateServiceContract(id, updateServiceContractDTO);
         return new ResponseEntity<>(modelMapper.map(createdContract, ServiceContractResponseDTO.class), HttpStatus.CREATED);
     }

@@ -1,3 +1,5 @@
+"use Client";
+
 import { useFilterContractWorkers } from "@/api/contract-worker/filter-contract-workers";
 import { Loader } from "../ui/full-page-loader";
 import React from "react";
@@ -10,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { useRouter } from "next/navigation";
 
 type Props = {
   searchKey: string;
@@ -17,6 +20,11 @@ type Props = {
 
 export const ContractWorkersTable = ({ searchKey }: Props) => {
   const { isLoading, data } = useFilterContractWorkers(searchKey);
+  const { push } = useRouter();
+
+  const onClickWorker = (contractWorkerId: string) => {
+    push(`/contract-worker/${contractWorkerId}`);
+  };
 
   return (
     <>
@@ -28,12 +36,16 @@ export const ContractWorkersTable = ({ searchKey }: Props) => {
             <TableHead>Last name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Phone</TableHead>
+            <TableHead>Available Bandwidth</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {!isLoading
             ? data?.data.map((contractWorker) => (
-                <TableRow key={contractWorker.employeeNumber}>
+                <TableRow
+                  key={contractWorker.employeeNumber}
+                  onClick={() => onClickWorker(contractWorker.employeeNumber)}
+                >
                   <TableCell className="font-medium">
                     {contractWorker.employeeNumber}
                   </TableCell>
@@ -43,6 +55,9 @@ export const ContractWorkersTable = ({ searchKey }: Props) => {
                   <TableCell>{contractWorker.lastName ?? "-"}</TableCell>
                   <TableCell>{contractWorker.email ?? "-"}</TableCell>
                   <TableCell>{contractWorker.phone ?? "-"}</TableCell>
+                  <TableCell>
+                    {contractWorker.availableBandwidth + "%"}
+                  </TableCell>
                 </TableRow>
               ))
             : null}

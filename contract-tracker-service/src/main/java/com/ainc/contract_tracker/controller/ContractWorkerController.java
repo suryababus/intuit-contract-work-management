@@ -1,16 +1,16 @@
 package com.ainc.contract_tracker.controller;
 
-import com.ainc.contract_tracker.dto.ContractWorkerResponseDTO;
-import com.ainc.contract_tracker.dto.CreateContractWorkerRequestDTO;
-import com.ainc.contract_tracker.dto.UpdateContractWorkerDTO;
-import com.ainc.contract_tracker.model.Employee;
+import com.ainc.contract_tracker.dto.*;
 import com.ainc.contract_tracker.service.AuthenticationService;
 import com.ainc.contract_tracker.service.ContractWorkerService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/contract-worker")
@@ -22,7 +22,7 @@ public class ContractWorkerController {
     private final ModelMapper modelMapper;
 
     @PostMapping
-    public ResponseEntity<ContractWorkerResponseDTO> createContractWorker(@RequestBody CreateContractWorkerRequestDTO createContractWorkerRequestDTO) {
+    public ResponseEntity<ContractWorkerResponseDTO> createContractWorker(@RequestBody @Valid CreateContractWorkerRequestDTO createContractWorkerRequestDTO) {
         try {
 
             var employee = contractWorkerService.createNewWorker(createContractWorkerRequestDTO);
@@ -44,6 +44,20 @@ public class ContractWorkerController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping(path = "/{id}/service-contracts")
+    @ResponseBody
+    public ResponseEntity<List<ContractWorkerServiceContractResponseDTO>> getContractWorkerServiceContracts(@PathVariable Long id) {
+
+        var serviceContractsResult = this.contractWorkerService.getContractWorkerServiceContract(id);
+        var serviceContractsResponse = serviceContractsResult.stream()
+                .map(eSC -> {
+                    var serviceContract = modelMapper.map(eSC.getService(), ContractWorkerServiceContractResponseDTO.class);
+                    serviceContract.setAllocatedBandwidth(eSC.getBandWidth());
+                    return serviceContract;
+                }).toList();
+        return ResponseEntity.ok(serviceContractsResponse);
+    }
+
     @GetMapping(path = "/me")
     @ResponseBody
     public ResponseEntity<ContractWorkerResponseDTO> getMe() {
@@ -55,7 +69,7 @@ public class ContractWorkerController {
 
     @PatchMapping(path = "/{id}")
     @ResponseBody
-    public ResponseEntity<ContractWorkerResponseDTO> updateEmployee(@PathVariable Long id, @RequestBody UpdateContractWorkerDTO updateContractWorkerDTO) {
+    public ResponseEntity<ContractWorkerResponseDTO> updateEmployee(@PathVariable Long id, @Valid @RequestBody UpdateContractWorkerDTO updateContractWorkerDTO) {
         try {
             var employee = this.contractWorkerService.updateEmployee(id, updateContractWorkerDTO);
 
