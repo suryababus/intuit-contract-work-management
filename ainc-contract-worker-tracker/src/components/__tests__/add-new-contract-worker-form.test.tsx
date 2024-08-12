@@ -4,6 +4,7 @@ import "@testing-library/jest-dom";
 import { useAddNewContractWorker } from "@/api/contract-worker/add-new-contract-worker";
 import MockQueryProvider from "../provider/mock-query-provider";
 import { Mock } from "../provider/mock-query-provider"; // Ensure Mock is imported correctly
+import { getContractWorkers } from "@/components/__tests__/mocks/get-contract-workers";
 
 jest.mock("@/api/contract-worker/add-new-contract-worker");
 
@@ -29,14 +30,7 @@ const mutateAsync = jest.fn().mockResolvedValueOnce(undefined);
 
 describe("AddNewContractWorkerForm", () => {
   test("renders form and submits data", async () => {
-    const mocks: Mock[] = [
-      {
-        url: "/api/v1/contract-workers",
-        method: "get",
-        response: [],
-        status: 200,
-      },
-    ];
+    const mocks: Mock[] = [getContractWorkers];
 
     render(
       <MockQueryProvider mocks={mocks}>

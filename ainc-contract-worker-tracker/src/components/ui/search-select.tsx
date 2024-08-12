@@ -48,6 +48,7 @@ export const SearchSelect = ({
           placeholder="Search..."
           value={value}
           name={name}
+          onChange={() => {}}
           data-testid={`search-select-${name}`}
         />
       </PopoverTrigger>

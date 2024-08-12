@@ -48,6 +48,17 @@ export const AddNewContractWorkerForm = () => {
         title="Add New Contract Worker"
         description="Please fill out the form to add a new contract worker"
         loading={isPending}
+        defaultValues={{
+          email: "",
+          firstName: "",
+          lastName: "",
+          phone: "",
+          role: "DEVELOPER",
+          status: "ACTIVE",
+          type: "CONTRACT_WORKER",
+          startDate: new Date().toISOString().split("T")[0],
+          endDate: new Date().toISOString().split("T")[0],
+        }}
       />
       {error && <p className="text-red-500">{error.message}</p>}
     </div>
