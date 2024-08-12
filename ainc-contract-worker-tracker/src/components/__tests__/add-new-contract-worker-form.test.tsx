@@ -5,21 +5,10 @@ import { useAddNewContractWorker } from "@/api/contract-worker/add-new-contract-
 import MockQueryProvider from "../provider/mock-query-provider";
 import { Mock } from "../provider/mock-query-provider"; // Ensure Mock is imported correctly
 import { getContractWorkers } from "@/components/__tests__/mocks/get-contract-workers";
+import { selectFieldInput } from "./util/select-field-input";
 
 jest.mock("@/api/contract-worker/add-new-contract-worker");
 
-const selectFieldInput = async (
-  fieldTestId: string,
-  optionToChoose: string
-) => {
-  const selectField = screen.getByTestId(fieldTestId);
-
-  fireEvent.click(selectField);
-
-  const option = await screen.findByTestId("option-" + optionToChoose);
-
-  fireEvent.click(option);
-};
 const mutateAsync = jest.fn().mockResolvedValueOnce(undefined);
 
 (useAddNewContractWorker as jest.Mock).mockReturnValue({
@@ -28,7 +17,7 @@ const mutateAsync = jest.fn().mockResolvedValueOnce(undefined);
   error: null,
 });
 
-describe("AddNewContractWorkerForm", () => {
+describe("Add New Contract Worker Form", () => {
   test("renders form and submits data", async () => {
     const mocks: Mock[] = [getContractWorkers];
 

@@ -3,11 +3,8 @@ import MockAdapter from "axios-mock-adapter";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ContractService } from "@/api";
-
-// mock next useRouter
-jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(() => ({ push: jest.fn() })),
-}));
+import { useParams } from "next/navigation";
+import { ModalProvider } from "../ui/useModal";
 
 export type Mock = {
   url: string;
@@ -59,7 +56,10 @@ const AxiosMockProvider: React.FC<AxiosMockProviderProps> = ({
   });
 
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <ModalProvider />
+      {children}
+    </QueryClientProvider>
   );
 };
 

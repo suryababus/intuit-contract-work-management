@@ -4,8 +4,8 @@ import MockQueryProvider, { Mock } from "../provider/mock-query-provider";
 import { ContractWorkersTable } from "../block/contract-workers-table";
 import { getContractWorkers } from "@/components/__tests__/mocks/get-contract-workers";
 
-describe("AddNewContractWorkerForm", () => {
-  test("renders form and submits data", async () => {
+describe("Search contract workers table", () => {
+  test("Contract workers table should be rendered properly", async () => {
     const mocks: Mock[] = [getContractWorkers];
 
     render(
