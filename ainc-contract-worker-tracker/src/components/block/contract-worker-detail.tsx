@@ -9,14 +9,22 @@ import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { useModal } from "../ui/useModal";
 import { Loader } from "../ui/full-page-loader";
+import { NotFound } from "./404";
 
 export function ContractWorkerDetail() {
   const { id } = useParams<{ id: string }>();
-  const { data, isLoading } = useContractWorker(id);
+  const { data, isLoading, error } = useContractWorker(id);
   const { mutateAsync } = useDeleteContractWorker();
   const { showModal, closeModal } = useModal();
 
   const contractWorker = data?.data;
+
+  if (error instanceof AxiosError) {
+    if (error.response?.status === 404) {
+      // TODO: Handle 404
+      return <NotFound />;
+    }
+  }
 
   const onDelete = async () => {
     showModal({

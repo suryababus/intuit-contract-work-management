@@ -1,4 +1,5 @@
 "use client";
+import ErrorBoundary from "@/components/block/error-boundary";
 import { NavPanel } from "@/components/block/nav-panel";
 import { TopBar } from "@/components/block/top-bar";
 import { FullPageLoader } from "@/components/ui/full-page-loader";
@@ -31,7 +32,9 @@ export default function AppLayout({
       <TopBar />
       <div className="flex-1 flex">
         <NavPanel />
-        <div className="flex-1">{children}</div>
+        <div className="flex-1">
+          <ErrorBoundary>{children}</ErrorBoundary>
+        </div>
       </div>
     </div>
   );

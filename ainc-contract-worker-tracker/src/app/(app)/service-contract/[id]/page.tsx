@@ -20,6 +20,7 @@ export default function ServiceContract() {
   const { id } = useParams<{ id: string }>();
   const { data, error, isLoading } = useServiceContract(id);
   const { showModal } = useModal();
+  const { user } = useAuth();
 
   if (isLoading) {
     return <FullPageLoader />;
@@ -38,6 +39,11 @@ export default function ServiceContract() {
   percentageFilled = percentageFilled > 100 ? 100 : percentageFilled;
 
   const showEditModal = () => {
+    if (user?.email !== serviceContract?.owner.email) {
+      toast.error("Only the owner can edit this contract");
+      return;
+    }
+
     showModal({
       content: (
         <EditServiceContractForm
