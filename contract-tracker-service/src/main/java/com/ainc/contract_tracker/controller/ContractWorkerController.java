@@ -1,6 +1,7 @@
 package com.ainc.contract_tracker.controller;
 
 import com.ainc.contract_tracker.dto.*;
+import com.ainc.contract_tracker.model.EmployeeRoleEnum;
 import com.ainc.contract_tracker.service.AuthenticationService;
 import com.ainc.contract_tracker.service.ContractWorkerService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -22,17 +24,17 @@ public class ContractWorkerController {
     private final ModelMapper modelMapper;
 
     @PostMapping
-    public ResponseEntity<ContractWorkerResponseDTO> createContractWorker(@RequestBody @Valid CreateContractWorkerRequestDTO createContractWorkerRequestDTO) {
-        try {
+    public ResponseEntity<ContractWorkerResponseDTO> createContractWorker(@RequestBody @Valid CreateContractWorkerRequestDTO createContractWorkerRequestDTO) throws AccessDeniedException {
+        // Only Admin can create service contract
+        var currentUser = this.authenticationService.getCurrentUser();
 
-            var employee = contractWorkerService.createNewWorker(createContractWorkerRequestDTO);
-
-            return new ResponseEntity<>(modelMapper.map(employee, ContractWorkerResponseDTO.class), HttpStatus.OK);
-
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        if (currentUser.getRole() != EmployeeRoleEnum.ADMIN) {
+            throw new AccessDeniedException("Only admin can create contract worker");
         }
+
+        var employee = contractWorkerService.createNewWorker(createContractWorkerRequestDTO);
+
+        return new ResponseEntity<>(modelMapper.map(employee, ContractWorkerResponseDTO.class), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{id}")
@@ -69,15 +71,16 @@ public class ContractWorkerController {
 
     @PatchMapping(path = "/{id}")
     @ResponseBody
-    public ResponseEntity<ContractWorkerResponseDTO> updateEmployee(@PathVariable Long id, @Valid @RequestBody UpdateContractWorkerDTO updateContractWorkerDTO) {
-        try {
-            var employee = this.contractWorkerService.updateEmployee(id, updateContractWorkerDTO);
+    public ResponseEntity<ContractWorkerResponseDTO> updateEmployee(@PathVariable Long id, @Valid @RequestBody UpdateContractWorkerDTO updateContractWorkerDTO) throws AccessDeniedException {
+        // Only Admin can create service contract
+        var currentUser = this.authenticationService.getCurrentUser();
 
-            return ResponseEntity.ok(modelMapper.map(employee, ContractWorkerResponseDTO.class));
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        if (currentUser.getRole() != EmployeeRoleEnum.ADMIN) {
+            throw new AccessDeniedException("Only admin can create contract worker");
         }
+        var employee = this.contractWorkerService.updateEmployee(id, updateContractWorkerDTO);
 
+        return ResponseEntity.ok(modelMapper.map(employee, ContractWorkerResponseDTO.class));
     }
 
     @DeleteMapping(path = "/{id}")
