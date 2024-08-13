@@ -2,33 +2,9 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import MockQueryProvider, { Mock } from "../provider/mock-query-provider";
 import { ContractWorkerDetail } from "../block/contract-worker-detail";
-import { useParams } from "next/navigation";
+import { getContractWorker } from "@/lib/unit-test/mocks/get-contract-worker";
+import { deleteContractWorker } from "@/lib/unit-test/mocks/delete-contract-worker";
 
-const getContractWorker: Mock = {
-  url: "/api/v1/contract-worker/1",
-  method: "get",
-  response: {
-    employeeNumber: "1",
-    firstName: "John",
-    lastName: "Doe",
-    role: "DEVELOPER",
-    startDate: "2021-01-01",
-    endDate: "2021-06-30",
-    status: "ACTIVE",
-    email: "john.doe@example.com",
-    phone: "123-456-7890",
-    availableBandwidth: 80,
-    deleted: false,
-  },
-  status: 200,
-};
-
-const deleteContractWorker: Mock = {
-  url: "/api/v1/contract-worker/1",
-  method: "delete",
-  response: {},
-  status: 204,
-};
 // mock next useRouter
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(() => ({ push: jest.fn() })),

@@ -1,9 +1,7 @@
-import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 import React from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ContractService } from "@/api";
-import { useParams } from "next/navigation";
 import { ModalProvider } from "../ui/useModal";
 
 export type Mock = {
