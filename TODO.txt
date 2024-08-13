@@ -2,5 +2,7 @@
 #2. Error handling
 3. Unit test
 #3. Update contract status
-4. Contract worker can only be 100% allocated
+#4. Contract worker can only be 100% allocated (Allocated based on their band width)
 #5. Update Service Status
+6. Contract worker can be move between contracts.
+7. Audit logs for services.

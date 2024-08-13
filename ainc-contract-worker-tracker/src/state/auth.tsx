@@ -44,7 +44,6 @@ export const useAuth = create<UseAuth>((set) => ({
             });
           }
         } catch (e) {
-          console.log(e);
           set({
             loading: false,
             isAuthenticated: false,
