@@ -4,8 +4,8 @@ import "@testing-library/jest-dom";
 import { useAddNewContractWorker } from "@/api/contract-worker/add-new-contract-worker";
 import MockQueryProvider from "../provider/mock-query-provider";
 import { Mock } from "../provider/mock-query-provider"; // Ensure Mock is imported correctly
-import { getContractWorkers } from "@/components/__tests__/mocks/get-contract-workers";
-import { selectFieldInput } from "./util/select-field-input";
+import { getContractWorkers } from "@/lib/unit-test/mocks/get-contract-workers";
+import { selectFieldInput } from "../../lib/unit-test/util/select-field-input";
 
 jest.mock("@/api/contract-worker/add-new-contract-worker");
 

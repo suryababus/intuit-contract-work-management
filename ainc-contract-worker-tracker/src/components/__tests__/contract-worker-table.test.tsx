@@ -2,7 +2,12 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import MockQueryProvider, { Mock } from "../provider/mock-query-provider";
 import { ContractWorkersTable } from "../block/contract-workers-table";
-import { getContractWorkers } from "@/components/__tests__/mocks/get-contract-workers";
+import { getContractWorkers } from "@/lib/unit-test/mocks/get-contract-workers";
+
+// mock next useRouter
+jest.mock("next/navigation", () => ({
+  useRouter: jest.fn(() => ({ push: jest.fn() })),
+}));
 
 describe("Search contract workers table", () => {
   test("Contract workers table should be rendered properly", async () => {
