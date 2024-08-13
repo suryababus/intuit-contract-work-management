@@ -1,6 +1,6 @@
 export const FullPageLoader = () => {
   return (
-    <div className="flex h-screen w-full items-center justify-center">
+    <div className="flex h-full flex-1 w-full items-center justify-center">
       <Loader />
     </div>
   );

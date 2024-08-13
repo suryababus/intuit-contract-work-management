@@ -4,6 +4,7 @@ package com.ainc.contract_tracker.service;
 import com.ainc.contract_tracker.dto.CreateServiceContractDTO;
 import com.ainc.contract_tracker.dto.UpdateServiceContractDTO;
 import com.ainc.contract_tracker.model.*;
+import com.ainc.contract_tracker.repository.AuditLogRepository;
 import com.ainc.contract_tracker.repository.EmployeeRepository;
 import com.ainc.contract_tracker.repository.ServiceContractRepository;
 import com.ainc.contract_tracker.repository.ServiceContractToEmployeesRepository;
@@ -29,11 +30,13 @@ public class ServiceContractService {
     private final AuthenticationService authenticationService;
     private final ServiceContractToEmployeesRepository serviceContractToEmployeesRepository;
     private final EmployeeRepository employeeRepository;
+    private final AuditLogService auditLogService;
 
     public Optional<ServiceContract> getServiceContract(String id) {
         return this.serviceContractRepository.findById(id);
     }
 
+    @Transactional
     public ServiceContract createServiceContract(CreateServiceContractDTO createServiceContractDTO) {
         var serviceContract = modelMapper.map(createServiceContractDTO, ServiceContract.class);
         serviceContract.setId(null);
@@ -46,8 +49,10 @@ public class ServiceContractService {
             serviceContract.setOwner(owner);
         }
 
+        var createdServiceContract = this.serviceContractRepository.save(serviceContract);
 
-        return this.serviceContractRepository.save(serviceContract);
+        this.auditLogService.addNewLog("Created", createdServiceContract.getId());
+        return createdServiceContract;
     }
 
     public List<ServiceContract> searchContract(String key) {
@@ -122,10 +127,12 @@ public class ServiceContractService {
 
         // Save the updated ServiceContract
         this.serviceContractRepository.save(serviceContract);
+        this.auditLogService.addNewLog(employee.getEmail() + " added to this service contract", serviceContract.getId());
         return true;
     }
 
 
+    @Transactional
     public ServiceContract updateServiceContract(String serviceContractId, UpdateServiceContractDTO updateServiceContractDTO) throws AccessDeniedException {
         var currentEmployee = this.authenticationService.getCurrentUser();
 
@@ -143,6 +150,8 @@ public class ServiceContractService {
 
         this.modelMapper.map(updateServiceContractDTO, serviceContract);
 
+
+        this.auditLogService.addNewLog("Updated", serviceContract.getId());
 
         // Save the updated ServiceContract
         return this.serviceContractRepository.save(serviceContract);
