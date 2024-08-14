@@ -177,6 +177,12 @@ public class ServiceContractService {
         if (toServiceContract.getStatus() != ServiceContractStatusEnum.ACTIVE) {
             throw new IllegalStateException("Contract worker can be assigned to only the active service contracts.");
         }
+        // Check if the Employee already exist in the destination
+        var isEmployeeAlreadyExistInTheDestinationContract = this.serviceContractToEmployeesRepository.findByEmployeeEmployeeNumberAndServiceId(employeeId, toServiceContractId);
+        if (isEmployeeAlreadyExistInTheDestinationContract.getId() != null) {
+            throw new IllegalStateException("Contract worker already exist in the destination");
+        }
+
 
         var existingServiceContractMapping = this.serviceContractToEmployeesRepository.findByEmployeeEmployeeNumberAndServiceId(employeeId, fromServiceContractId);
 

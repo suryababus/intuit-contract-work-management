@@ -33,7 +33,7 @@ export const MoveContractWorkerForm = ({
     data: z.infer<typeof moveContractWorkerForm>
   ) => {
     try {
-      mutateAsync({
+      await mutateAsync({
         destinationContractId: data.destinationServiceContractId.value,
         employeeNumber,
         sourceContractId,
