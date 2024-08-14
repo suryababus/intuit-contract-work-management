@@ -12,4 +12,6 @@ import java.util.List;
 public interface ServiceContractToEmployeesRepository extends CrudRepository<ServiceContractsToEmployees, String> {
 
     List<SearchServiceContractToEmployeeProjectile> findAllByEmployeeEmployeeNumber(Long id);
+
+    SearchServiceContractToEmployeeProjectile findByEmployeeEmployeeNumberAndServiceId(Long id, String serviceContractId);
 }

@@ -4,7 +4,6 @@ package com.ainc.contract_tracker.service;
 import com.ainc.contract_tracker.dto.CreateServiceContractDTO;
 import com.ainc.contract_tracker.dto.UpdateServiceContractDTO;
 import com.ainc.contract_tracker.model.*;
-import com.ainc.contract_tracker.repository.AuditLogRepository;
 import com.ainc.contract_tracker.repository.EmployeeRepository;
 import com.ainc.contract_tracker.repository.ServiceContractRepository;
 import com.ainc.contract_tracker.repository.ServiceContractToEmployeesRepository;
@@ -107,7 +106,7 @@ public class ServiceContractService {
         }
 
 
-        // Add the employee to the set
+        // Add the employee to contract mapping
         var newServiceContractToEmployee = new ServiceContractsToEmployees();
         newServiceContractToEmployee.setEmployee(employee);
         newServiceContractToEmployee.setService(serviceContract);
@@ -128,6 +127,93 @@ public class ServiceContractService {
         // Save the updated ServiceContract
         this.serviceContractRepository.save(serviceContract);
         this.auditLogService.addNewLog(employee.getEmail() + " added to this service contract", serviceContract.getId());
+        return true;
+    }
+
+
+    @Transactional
+    public boolean moveEmployeeToContract(Long employeeId, String fromServiceContractId, String toServiceContractId) throws AccessDeniedException {
+
+        var currentEmployee = this.authenticationService.getCurrentUser();
+
+
+        // Fetch the existing ServiceContract
+        ServiceContract fromServiceContract = serviceContractRepository.findById(fromServiceContractId)
+                .orElseThrow(() -> new NotFoundException("From ServiceContract not found"));
+
+
+        // Throw if the owner is not the person trying to change it.
+        if (!Objects.equals(currentEmployee.getEmail(), fromServiceContract.getOwner().getEmail())) {
+            throw new AccessDeniedException("Only the owner of the service contract can edit it");
+        }
+
+
+        // Check if the service contract is active
+        if (fromServiceContract.getStatus() != ServiceContractStatusEnum.ACTIVE) {
+            throw new IllegalStateException("Contract worker can be assigned to only the active service contracts.");
+        }
+
+        // Fetch the Employee to be added
+        Employee employee = contractWorkerService.getContractWorker(employeeId)
+                .orElseThrow(() -> new NotFoundException("Employee not found"));
+
+        //  Check if the employee is already assigned
+        if (!fromServiceContract.getEmployees().contains(employee)) {
+            throw new IllegalStateException("Employee is not in the From Service Contract");
+        }
+
+
+        ServiceContract toServiceContract = serviceContractRepository.findById(toServiceContractId)
+                .orElseThrow(() -> new NotFoundException("From ServiceContract not found"));
+
+
+        // Throw if the owner is not the person trying to change it.
+        if (!Objects.equals(currentEmployee.getEmail(), toServiceContract.getOwner().getEmail())) {
+            throw new AccessDeniedException("Only the owner of the service contract can edit it");
+        }
+
+
+        // Check if the service contract is active
+        if (toServiceContract.getStatus() != ServiceContractStatusEnum.ACTIVE) {
+            throw new IllegalStateException("Contract worker can be assigned to only the active service contracts.");
+        }
+        // Check if the Employee already exist in the destination
+        var isEmployeeAlreadyExistInTheDestinationContract = this.serviceContractToEmployeesRepository.findByEmployeeEmployeeNumberAndServiceId(employeeId, toServiceContractId);
+        if (isEmployeeAlreadyExistInTheDestinationContract.getId() != null) {
+            throw new IllegalStateException("Contract worker already exist in the destination");
+        }
+
+
+        var existingServiceContractMapping = this.serviceContractToEmployeesRepository.findByEmployeeEmployeeNumberAndServiceId(employeeId, fromServiceContractId);
+
+        // Add the employee to contract mapping
+        var updatedServiceContractToEmployee = new ServiceContractsToEmployees();
+        updatedServiceContractToEmployee.setId(existingServiceContractMapping.getId());
+        updatedServiceContractToEmployee.setEmployee(employee);
+        updatedServiceContractToEmployee.setService(toServiceContract);
+        updatedServiceContractToEmployee.setBandWidth(existingServiceContractMapping.getBandWidth());
+        serviceContractToEmployeesRepository.save(updatedServiceContractToEmployee);
+
+
+        // Add one to destination service constract
+        var currentDeveloperCount = toServiceContract.getCurrentDeveloperCount();
+        if (currentDeveloperCount == null) {
+            currentDeveloperCount = 0;
+        }
+        // Update the current developer count
+        toServiceContract.setCurrentDeveloperCount(currentDeveloperCount + 1);
+
+        // Minus one to Source Contract
+        currentDeveloperCount = fromServiceContract.getCurrentDeveloperCount();
+        if (currentDeveloperCount == null) {
+            currentDeveloperCount = 0;
+        }
+        // Update the current developer count
+        fromServiceContract.setCurrentDeveloperCount(currentDeveloperCount - 1);
+
+        this.auditLogService.addNewLog(employee.getEmail() + " moved to " + toServiceContractId, fromServiceContractId);
+        this.auditLogService.addNewLog(employee.getEmail() + " moved from " + fromServiceContractId, toServiceContractId);
+
         return true;
     }
 
