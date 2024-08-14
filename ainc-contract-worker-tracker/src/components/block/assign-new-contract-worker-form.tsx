@@ -59,7 +59,7 @@ export const AssignNewContractWorkerForm = ({
   };
 
   return (
-    <div className="flex flex-row gap-3 items-center">
+    <div className="flex flex-col gap-3 items-center">
       <FormBuilder
         zodSchema={assignNewContractWorkerFormSchema}
         onSubmit={onSubmit}
