@@ -77,6 +77,11 @@ export const AssignNewContractWorkerForm = ({
           },
         }}
       />
+      {error && (
+        <p className="text-red-500 text-center">
+          {handleAxiosErrorToString(error as AxiosError)}
+        </p>
+      )}
     </div>
   );
 };

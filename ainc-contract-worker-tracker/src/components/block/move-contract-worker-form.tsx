@@ -66,7 +66,11 @@ export const MoveContractWorkerForm = ({
           },
         }}
       />
-      {error && <p className="text-red-500">{error.message}</p>}
+      {error && (
+        <p className="text-red-500 text-center">
+          {handleAxiosErrorToString(error as AxiosError)}
+        </p>
+      )}
     </div>
   );
 };

@@ -60,7 +60,11 @@ export const AddNewContractWorkerForm = () => {
           endDate: new Date().toISOString().split("T")[0],
         }}
       />
-      {error && <p className="text-red-500">{error.message}</p>}
+      {error && (
+        <p className="text-red-500 text-center">
+          {handleAxiosErrorToString(error as AxiosError)}
+        </p>
+      )}
     </div>
   );
 };
