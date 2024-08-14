@@ -18,6 +18,8 @@ import { ServiceContractHeader } from "@/components/block/service-contract-heade
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { AuditLog } from "@/components/block/audit-log";
+import { MoveContractWorkerForm } from "@/components/block/move-contract-worker-form";
+import { Button } from "@/components/ui/button";
 
 const defaultTabStyle = "px-3 py-2 rounded-md bg-muted/25 m-2 cursor-pointer";
 const activeTabStyle = "bg-primary text-primary-foreground";
@@ -36,7 +38,6 @@ export default function ServiceContract() {
 
   const serviceContract = data?.data;
 
-  // return serviceContract?.id ? <AuditLog id={serviceContract?.id} /> : null;
   return (
     <div className="w-full flex-1 max-w-5xl mx-auto p-4 md:p-6 lg:p-8">
       <ServiceContractHeader id={id} />
@@ -111,6 +112,16 @@ function ProjectMembers({
     push("/contract-worker/" + id);
   };
 
+  const onMoveEmployeeClick = (id: string) => {
+    showModal({
+      content: (
+        <MoveContractWorkerForm
+          employeeNumber={id}
+          sourceContractId={serviceContractId}
+        />
+      ),
+    });
+  };
   return (
     <section className="mt-8">
       <h2 className="text-2xl font-bold mb-4">Project Team</h2>
@@ -134,6 +145,15 @@ function ProjectMembers({
               <div className="text-sm text-muted-foreground">
                 {employee.email}
               </div>
+
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onMoveEmployeeClick(employee.employeeNumber);
+                }}
+              >
+                Move Contract Worker
+              </Button>
             </CardContent>
           </Card>
         ))}

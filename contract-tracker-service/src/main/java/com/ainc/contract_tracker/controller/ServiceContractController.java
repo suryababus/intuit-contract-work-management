@@ -1,10 +1,7 @@
 package com.ainc.contract_tracker.controller;
 
 
-import com.ainc.contract_tracker.dto.AssignEmployeeToServiceContractRequestDTO;
-import com.ainc.contract_tracker.dto.CreateServiceContractDTO;
-import com.ainc.contract_tracker.dto.ServiceContractResponseDTO;
-import com.ainc.contract_tracker.dto.UpdateServiceContractDTO;
+import com.ainc.contract_tracker.dto.*;
 import com.ainc.contract_tracker.model.ServiceContract;
 import com.ainc.contract_tracker.service.ServiceContractService;
 import jakarta.validation.Valid;
@@ -56,6 +53,12 @@ public class ServiceContractController {
     public ResponseEntity<ServiceContractResponseDTO> updateServiceContract(@PathVariable String id, @Valid @RequestBody UpdateServiceContractDTO updateServiceContractDTO) throws AccessDeniedException {
         var createdContract = serviceContractService.updateServiceContract(id, updateServiceContractDTO);
         return new ResponseEntity<>(modelMapper.map(createdContract, ServiceContractResponseDTO.class), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/service-contract/{id}/move")
+    public ResponseEntity<Boolean> moveContractWorkerFromServiceToOther(@PathVariable String id, @Valid @RequestBody MoveContractWorkerRequest moveContractWorkerRequest) throws AccessDeniedException {
+        return ResponseEntity.ok(this.serviceContractService.moveEmployeeToContract(moveContractWorkerRequest.getEmployeeNumber(), id, moveContractWorkerRequest.getDestinationContractId()));
+
     }
 
 
