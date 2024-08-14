@@ -179,7 +179,7 @@ public class ServiceContractService {
         }
         // Check if the Employee already exist in the destination
         var isEmployeeAlreadyExistInTheDestinationContract = this.serviceContractToEmployeesRepository.findByEmployeeEmployeeNumberAndServiceId(employeeId, toServiceContractId);
-        if (isEmployeeAlreadyExistInTheDestinationContract.getId() != null) {
+        if (isEmployeeAlreadyExistInTheDestinationContract != null) {
             throw new IllegalStateException("Contract worker already exist in the destination");
         }
 
