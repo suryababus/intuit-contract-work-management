@@ -21,7 +21,8 @@ import { AuditLog } from "@/components/block/audit-log";
 import { MoveContractWorkerForm } from "@/components/block/move-contract-worker-form";
 import { Button } from "@/components/ui/button";
 
-const defaultTabStyle = "px-3 py-2 rounded-md bg-muted/25 m-2 cursor-pointer";
+const defaultTabStyle =
+  "px-3 py-2 rounded-md bg-muted/25 m-2 cursor-pointer border-2";
 const activeTabStyle = "bg-primary text-primary-foreground";
 
 export default function ServiceContract() {

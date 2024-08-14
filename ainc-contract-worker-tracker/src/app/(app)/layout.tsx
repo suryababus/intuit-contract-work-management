@@ -19,7 +19,11 @@ export default function AppLayout({
   }, []);
 
   if (loading) {
-    return <FullPageLoader />;
+    return (
+      <div className="h-screen w-screen">
+        <FullPageLoader />
+      </div>
+    );
   }
 
   if (!isAuthenticated) {

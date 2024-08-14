@@ -59,12 +59,12 @@ export function ServiceContractDetails({ id }: ServiceContractDetailsProps) {
           <Separator />
           <div className="flex items-center justify-between">
             <div className="text-sm font-medium">Start Date</div>
-            <div className="text-sm font-medium">2023-04-01</div>
+            <div className="text-sm font-medium">2024-07-01</div>
           </div>
           <Separator />
           <div className="flex items-center justify-between">
             <div className="text-sm font-medium">Due Date</div>
-            <div className="text-sm font-medium">2023-09-30</div>
+            <div className="text-sm font-medium">2025-07-31</div>
           </div>
         </CardContent>
       </Card>
